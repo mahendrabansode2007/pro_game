@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeuroPlay — IQ Test &amp; Brain Games</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Google Fonts: Syne (display) + DM Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════ BACKGROUND ORBS -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="app-wrapper">
+      <!-- ══════════════════════════════════════════════ HEADER -->
+      <header class="site-header">
+        <div class="logo">
+          <span class="logo-icon">🧠</span>
+          <span class="logo-text">NeuroPlay</span>
+        </div>
+        <div class="user-badge" id="userBadge" style="display: none">
+          <span class="badge-dot"></span>
+          <span id="badgeUsername"></span>
+        </div>
+      </header>
+
+      <!-- ══════════════════════════════════════════════ MAIN CONTENT -->
+      <main id="mainContent">
+
+        <!-- ──────────────────── SCREEN 1: Welcome / Login -->
+        <section id="screenWelcome" class="screen active">
+          <div class="hero-card">
+            <div class="hero-eyebrow">Brain Training Platform</div>
+            <h1 class="hero-title">
+              What's your<br /><em>IQ Score?</em>
+            </h1>
+            <p class="hero-subtitle">
+              Take a timed 5-question IQ test and unlock a personalized
+              brain-training mini game — uniquely yours.
+            </p>
+
+            <div class="feature-pills">
+              <span class="pill">⏱ 30s per question</span>
+              <span class="pill">🎯 5 MCQ questions</span>
+              <span class="pill">🎮 Unique game assigned</span>
+            </div>
+
+            <div class="input-group">
+              <label for="usernameInput">Enter your name to begin</label>
+              <input
+                type="text"
+                id="usernameInput"
+                placeholder="e.g. Alex, Priya, Jordan…"
+                maxlength="30"
+                autocomplete="off"
+              />
+            </div>
+
+            <button class="btn btn-primary" id="btnStart" onclick="startQuiz()">
+              <span>Start IQ Test</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- ──────────────────── SCREEN 2: Quiz -->
+        <section id="screenQuiz" class="screen">
+          <div class="quiz-card">
+            <!-- Progress bar -->
+            <div class="quiz-meta">
+              <span id="questionCounter">Question 1 / 5</span>
+              <div class="timer-ring">
+                <svg viewBox="0 0 48 48">
+                  <circle class="ring-track" cx="24" cy="24" r="20" />
+                  <circle class="ring-fill" id="timerRing" cx="24" cy="24" r="20" />
+                </svg>
+                <span id="timerDisplay">30</span>
+              </div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Question -->
+            <div class="question-body">
+              <div class="q-number" id="qNumber">Q1</div>
+              <p class="q-text" id="questionText">Loading question…</p>
+            </div>
+
+            <!-- Options -->
+            <div class="options-grid" id="optionsGrid">
+              <!-- Dynamically injected -->
+            </div>
+
+            <!-- Next / Submit -->
+            <button
+              class="btn btn-outline"
+              id="btnNext"
+              onclick="nextQuestion()"
+              disabled
+            >
+              Next Question →
+            </button>
+          </div>
+        </section>
+
+        <!-- ──────────────────── SCREEN 3: Score Result -->
+        <section id="screenResult" class="screen">
+          <div class="result-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 120 120">
+                <circle class="score-track" cx="60" cy="60" r="52" />
+                <circle class="score-arc" id="scoreArc" cx="60" cy="60" r="52" />
+              </svg>
+              <div class="score-inner">
+                <span id="scoreDisplay">0</span>
+                <small>/5</small>
+              </div>
+            </div>
+
+            <h2 class="result-title" id="resultTitle">Calculating…</h2>
+            <p class="result-subtitle" id="resultSubtitle"></p>
+            <div class="iq-badge" id="iqBadge"></div>
+
+            <button
+              class="btn btn-primary"
+              id="btnGetGame"
+              onclick="fetchGame()"
+            >
+              <span>Get My Game</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- ──────────────────── SCREEN 4: Loading -->
+        <section id="screenLoading" class="screen">
+          <div class="loading-card">
+            <div class="loader-orb">
+              <div class="orb-pulse"></div>
+              <span>🎮</span>
+            </div>
+            <h2>Finding your perfect game…</h2>
+            <p>Analyzing your score and picking a unique challenge</p>
+          </div>
+        </section>
+
+        <!-- ──────────────────── SCREEN 5: Game Arena -->
+        <section id="screenGame" class="screen">
+          <div class="game-arena">
+            <div class="game-header">
+              <div class="game-title-block">
+                <span class="game-tag" id="gameTag">memory</span>
+                <h2 id="gameName">Memory Match</h2>
+                <p id="gameDesc">Flip cards and match all pairs!</p>
+              </div>
+              <button class="btn btn-ghost" onclick="resetToHome()">← Play Again</button>
+            </div>
+
+            <!-- ─── GAME CONTAINERS ─── -->
+
+            <!-- Memory Game -->
+            <div id="gameMemory" class="game-container" style="display:none">
+              <div class="memory-stats">
+                <span>Moves: <strong id="memMoves">0</strong></span>
+                <span>Pairs: <strong id="memPairs">0</strong> / 8</span>
+                <span>Time: <strong id="memTime">0s</strong></span>
+              </div>
+              <div class="memory-grid" id="memoryGrid"></div>
+              <button class="btn btn-outline mt-16" onclick="initMemoryGame()">🔄 Restart</button>
+            </div>
+
+            <!-- Reaction Game -->
+            <div id="gameReaction" class="game-container" style="display:none">
+              <div class="reaction-arena" id="reactionArena">
+                <div class="reaction-pad" id="reactionPad" onclick="handleReactionClick()">
+                  <span id="reactionText">Click to Start</span>
+                </div>
+              </div>
+              <div class="reaction-stats">
+                <div class="stat-box">
+                  <label>Last</label>
+                  <strong id="reactionLast">—</strong>
+                </div>
+                <div class="stat-box">
+                  <label>Best</label>
+                  <strong id="reactionBest">—</strong>
+                </div>
+                <div class="stat-box">
+                  <label>Attempts</label>
+                  <strong id="reactionAttempts">0</strong>
+                </div>
+              </div>
+              <button class="btn btn-outline mt-16" onclick="resetReactionGame()">🔄 Reset</button>
+            </div>
+
+            <!-- Puzzle Game (15-puzzle) -->
+            <div id="gamePuzzle" class="game-container" style="display:none">
+              <div class="puzzle-stats">
+                <span>Moves: <strong id="puzzleMoves">0</strong></span>
+                <span id="puzzleStatus">Slide tiles to solve the puzzle!</span>
+              </div>
+              <div class="puzzle-grid" id="puzzleGrid"></div>
+              <button class="btn btn-outline mt-16" onclick="initPuzzleGame()">🔄 Shuffle</button>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
